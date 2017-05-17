@@ -1,11 +1,15 @@
 package nl.ou.abi.GraphsMatchingSpike;
 
-import static org.junit.Assert.*;
-
+import nl.ou.dpd.domain.edge.Edge;
+import nl.ou.dpd.domain.node.Clazz;
+import nl.ou.dpd.domain.node.Interface;
+import nl.ou.dpd.domain.node.Node;
 import org.junit.Test;
 
-import nl.ou.dpd.domain.edge.Edge;
-import nl.ou.dpd.domain.node.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author Peter Vansweevelt
