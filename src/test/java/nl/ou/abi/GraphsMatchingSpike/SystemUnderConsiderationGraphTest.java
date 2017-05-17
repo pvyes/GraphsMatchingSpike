@@ -73,8 +73,15 @@ public class SystemUnderConsiderationGraphTest {
     }
 
     @Test
-    public void testNoMatch() {
+    public void testNoEdgeMatch() {
         when(edgeComparator.compare(any(Relation.class), any(Relation.class))).thenReturn(1);
+        VF2SubgraphIsomorphismInspector<Node, Relation> inspector = new VF2SubgraphIsomorphismInspector<>(suc, dp, vertexComparator, edgeComparator);
+        assertFalse(inspector.isomorphismExists());
+    }
+
+    @Test
+    public void testNoNodeMatch() {
+        when(vertexComparator.compare(any(Node.class), any(Node.class))).thenReturn(1);
         VF2SubgraphIsomorphismInspector<Node, Relation> inspector = new VF2SubgraphIsomorphismInspector<>(suc, dp, vertexComparator, edgeComparator);
         assertFalse(inspector.isomorphismExists());
     }
