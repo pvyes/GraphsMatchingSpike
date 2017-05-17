@@ -3,8 +3,11 @@ A trial application to find subgraphs with jgrapht
 
 plan:
 
-1. Set up a Maven project
-2. Create a DesignPattern in graph-style with jgrapht, using node and edge classes (copy and paste)
+1. Set up a Maven project ok
+1a. Import Edge and Node classes ok (Logging disabled)
+1b. Import DP and SuC ok (Conditions disabled)
+
+2. Create a DesignPattern in graph-style with jgrapht, using node and edge classes (copy and paste) ok
 2a. A simple DP with only relationships and their types
 2b. A DP with relations, multiplicities and a abstract class
 2c. A DP like 2b with attributes and attribute-types
