@@ -1,5 +1,6 @@
 package nl.ou.abi.GraphsMatchingSpike;
 
+import nl.ou.dpd.domain.edge.Cardinality;
 import nl.ou.dpd.domain.edge.Edge;
 import nl.ou.dpd.domain.edge.Relation;
 import nl.ou.dpd.domain.node.Clazz;
@@ -35,18 +36,29 @@ public class SystemUnderConsiderationGraphTest {
 
     @Before
     public void init() {
+        // ----- System under consideration -----
         final Node superClassSys = createPublicAbstractClass("super");
         final Node subClassSys = createPublicClass("sub");
         suc.addVertex(superClassSys);
         suc.addVertex(subClassSys);
-        suc.addEdge(superClassSys, subClassSys);
+        final Relation sucRelation = suc.addEdge(superClassSys, subClassSys);
+        // Alter the relation returned from the graph
+        sucRelation.setCardinalityLeft(Cardinality.valueOf("1"));
+        sucRelation.setCardinalityRight(Cardinality.valueOf("*"));
 
+        // ----- Design pattern -----
         final Node superClassDp = createPublicAbstractClass("AbstractClass");
         final Node subClassDp = createPublicClass("ConcreteClass");
+        // Create a relation to add to the dp
+        final Relation dpRelation = new Relation("A", "B");
+        dpRelation.setCardinalityLeft(Cardinality.valueOf("2"));
+        dpRelation.setCardinalityRight(Cardinality.valueOf("2"));
+        // Add nodes and relation
         dp.addVertex(superClassDp);
         dp.addVertex(subClassDp);
-        dp.addEdge(superClassDp, subClassDp);
+        dp.addEdge(superClassDp, subClassDp, dpRelation);
 
+        // ----- Comparators for matching -----
         when(vertexComparator.compare(superClassSys, superClassDp)).thenReturn(0);
         when(vertexComparator.compare(subClassSys, subClassDp)).thenReturn(0);
         when(edgeComparator.compare(any(Relation.class), any(Relation.class))).thenReturn(0);
@@ -57,8 +69,14 @@ public class SystemUnderConsiderationGraphTest {
         final Relation relation = suc.edgeSet().stream().findFirst().orElse(null);
         assertThat(suc.getEdgeSource(relation).getName(), is("super"));
         assertThat(suc.getEdgeTarget(relation).getName(), is("sub"));
+
+        // Check if the default id and name are set by the relation factory
         assertThat(relation.getId(), is("super-sub"));
         assertThat(relation.getName(), is("super-sub"));
+
+        // Check the cardinality set after creating the edge in the graph
+        assertThat(relation.getCardinalityLeft(), is(Cardinality.valueOf("1")));
+        assertThat(relation.getCardinalityRight(), is(Cardinality.valueOf("*")));
     }
 
     @Test
@@ -66,8 +84,14 @@ public class SystemUnderConsiderationGraphTest {
         final Relation relation = dp.edgeSet().stream().findFirst().orElse(null);
         assertThat(dp.getEdgeSource(relation).getName(), is("AbstractClass"));
         assertThat(dp.getEdgeTarget(relation).getName(), is("ConcreteClass"));
-        assertThat(relation.getId(), is("AbstractClass-ConcreteClass"));
-        assertThat(relation.getName(), is("AbstractClass-ConcreteClass"));
+
+        // Check if the name and id are taken from the relation passed to the addEdge method
+        assertThat(relation.getId(), is("A"));
+        assertThat(relation.getName(), is("B"));
+
+        // Check the cardinality that was set before creating the edge in the graph
+        assertThat(relation.getCardinalityLeft(), is(Cardinality.valueOf("2")));
+        assertThat(relation.getCardinalityRight(), is(Cardinality.valueOf("2")));
     }
 
     @Test

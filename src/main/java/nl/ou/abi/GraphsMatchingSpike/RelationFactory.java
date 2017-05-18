@@ -12,11 +12,4 @@ public class RelationFactory implements EdgeFactory<Node, Relation> {
         return new Relation(id, name);
     }
 
-    public Relation createEdge(Node leftNode, Node rightNode, String id, String name) {
-        final Relation relation = this.createEdge(leftNode, rightNode);
-        relation.setId(id);
-        relation.setName(name);
-        return relation;
-    }
-
 }

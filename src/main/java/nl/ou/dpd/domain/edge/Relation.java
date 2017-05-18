@@ -2,10 +2,11 @@ package nl.ou.dpd.domain.edge;
 
 
 import nl.ou.dpd.domain.node.Node;
+import org.jgrapht.graph.DefaultEdge;
 
 import java.util.Objects;
 
-public class Relation {
+public class Relation extends DefaultEdge {
 
     private String id;
     private String name;
