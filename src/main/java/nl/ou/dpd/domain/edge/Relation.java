@@ -11,13 +11,12 @@ public class Relation extends DefaultEdge {
     private String id;
     private String name;
     private RelationType relationType;
-    private boolean selfRef, locked, virtual;
+    private boolean locked, virtual;
     private Cardinality cardinalityLeft; //cardinality on leftNode
     private Cardinality cardinalityRight; //cardinality on rightNode
 
-    public Relation(Node leftNode, Node rightNode, RelationType type) {
+    public Relation(RelationType type) {
         this.relationType = type;
-        this.selfRef = leftNode.equals(rightNode);
         this.locked = false;
         this.virtual = false;
         this.cardinalityLeft = null;
@@ -25,7 +24,7 @@ public class Relation extends DefaultEdge {
     }
 
     public Relation(Node leftNode, Node rightNode, RelationType type, String name) {
-        this(leftNode, rightNode, type);
+        this(type);
         this.name = name;
     }
 
@@ -52,54 +51,37 @@ public class Relation extends DefaultEdge {
         return name;
     }
 
-    public void setName(String name) {
+    public Relation setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public Relation setId(String id) {
         this.id = id;
+        return this;
     } 
-
-//    public boolean isVirtual() {
-//        return virtual;
-//    }
-//
-//    public boolean lock() {
-//        this.locked = true;
-//        return isLocked();
-//    }
-//
-//    public boolean unlock() {
-//        this.locked = false;
-//        return !isLocked();
-//    }
-//
-//    public boolean isLocked() {
-//        return this.locked;
-//    }
 
     public RelationType getRelationType() {
         return relationType;
     }
 
-    public void setRelationType(RelationType relationType) {
+    public Relation setRelationType(RelationType relationType) {
         this.relationType = relationType;
+        return this;
     }
 
-    public boolean isSelfRef() {
-        return selfRef;
-    }
-
-    public void setCardinalityLeft(Cardinality cardinality) {
+    public Relation setCardinalityLeft(Cardinality cardinality) {
         this.cardinalityLeft = cardinality;
+        return this;
     }
 
-    public void setCardinalityRight(Cardinality cardinality) {
+    public Relation setCardinalityRight(Cardinality cardinality) {
         this.cardinalityRight = cardinality;
+        return this;
     }
 
     public Cardinality getCardinalityLeft() {
@@ -110,8 +92,14 @@ public class Relation extends DefaultEdge {
         return cardinalityRight;
     }
 
-    public void removeCardinalityLeft() {
+    public Relation removeCardinalityLeft() {
         cardinalityLeft = null;
+        return this;
+    }
+
+    public Relation removeCardinalityRight() {
+        cardinalityRight = null;
+        return this;
     }
 
     @Override
@@ -119,8 +107,7 @@ public class Relation extends DefaultEdge {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Relation relation = (Relation) o;
-        return selfRef == relation.selfRef &&
-                locked == relation.locked &&
+        return locked == relation.locked &&
                 virtual == relation.virtual &&
                 Objects.equals(id, relation.id) &&
                 Objects.equals(name, relation.name) &&
@@ -131,7 +118,7 @@ public class Relation extends DefaultEdge {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, relationType, selfRef, locked, virtual, cardinalityLeft, cardinalityRight);
+        return Objects.hash(id, name, relationType, locked, virtual, cardinalityLeft, cardinalityRight);
     }
 }
 
