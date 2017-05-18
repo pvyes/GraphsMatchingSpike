@@ -120,10 +120,10 @@ public class AdapterGraphTest {
             final boolean same = sameRelationType && sameCardinalityLeft && sameCardinalityRight;
             if (same) {
                 String output = String.format("%s -> %s matches %s -> %s.",
-                        adapterPattern.getEdgeSource(o1).getName(),
-                        adapterPattern.getEdgeTarget(o1).getName(),
-                        systemUnderConsideration.getEdgeSource(o2).getName(),
-                        systemUnderConsideration.getEdgeTarget(o2).getName());
+                        systemUnderConsideration.getEdgeSource(o1).getName(),
+                        systemUnderConsideration.getEdgeTarget(o1).getName(),
+                        adapterPattern.getEdgeSource(o2).getName(),
+                        adapterPattern.getEdgeTarget(o2).getName());
                 System.out.println(output);
                 return 0;
             }
