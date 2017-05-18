@@ -1,10 +1,8 @@
 package nl.ou.abi.GraphsMatchingSpike;
 
 import nl.ou.dpd.domain.edge.Cardinality;
-import nl.ou.dpd.domain.edge.Edge;
 import nl.ou.dpd.domain.edge.Relation;
 import nl.ou.dpd.domain.node.Clazz;
-import nl.ou.dpd.domain.node.Interface;
 import nl.ou.dpd.domain.node.Node;
 import nl.ou.dpd.domain.node.Visibility;
 import org.jgrapht.alg.isomorphism.VF2SubgraphIsomorphismInspector;
@@ -31,34 +29,45 @@ public class SystemUnderConsiderationGraphTest {
     @Mock
     Comparator<Relation> edgeComparator;
 
-    private SystemUnderConsiderationGraph suc = new SystemUnderConsiderationGraph("SystemUnderConsideration");
-    private DesignPatternGraph dp = new DesignPatternGraph("TemplateMethod");
+    private SystemUnderConsiderationGraph suc;
+    private Node superClassSys;
+    private Node subClassSys;
+
+    private DesignPatternGraph dp;
+    private Node superClassDp;
+    private Node subClassDp;
 
     @Before
-    public void init() {
-        // ----- System under consideration -----
+    public void initSystemUnderConsideration() {
+        suc = new SystemUnderConsiderationGraph("SystemUnderConsideration");
         final Node superClassSys = createPublicAbstractClass("super");
         final Node subClassSys = createPublicClass("sub");
+
         suc.addVertex(superClassSys);
         suc.addVertex(subClassSys);
         final Relation sucRelation = suc.addEdge(superClassSys, subClassSys);
-        // Alter the relation returned from the graph
+
         sucRelation.setCardinalityLeft(Cardinality.valueOf("1"));
         sucRelation.setCardinalityRight(Cardinality.valueOf("*"));
+    }
 
-        // ----- Design pattern -----
-        final Node superClassDp = createPublicAbstractClass("AbstractClass");
-        final Node subClassDp = createPublicClass("ConcreteClass");
-        // Create a relation to add to the dp
+    @Before
+    public void initDesignPattern() {
+        dp = new DesignPatternGraph("TemplateMethod");
+        superClassDp = createPublicAbstractClass("AbstractClass");
+        subClassDp = createPublicClass("ConcreteClass");
+
         final Relation dpRelation = new Relation("A", "B");
         dpRelation.setCardinalityLeft(Cardinality.valueOf("2"));
         dpRelation.setCardinalityRight(Cardinality.valueOf("2"));
-        // Add nodes and relation
+
         dp.addVertex(superClassDp);
         dp.addVertex(subClassDp);
         dp.addEdge(superClassDp, subClassDp, dpRelation);
+    }
 
-        // ----- Comparators for matching -----
+    @Before
+    public void initComparators() {
         when(vertexComparator.compare(superClassSys, superClassDp)).thenReturn(0);
         when(vertexComparator.compare(subClassSys, subClassDp)).thenReturn(0);
         when(edgeComparator.compare(any(Relation.class), any(Relation.class))).thenReturn(0);
