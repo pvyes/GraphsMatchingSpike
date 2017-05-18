@@ -7,10 +7,9 @@ import org.jgrapht.EdgeFactory;
 public class RelationFactory implements EdgeFactory<Node, Relation> {
 
     public Relation createEdge(Node leftNode, Node rightNode) {
-        final Relation relation = new Relation(null, null);
-        relation.setLeftNode(leftNode);
-        relation.setRightNode(rightNode);
-        return relation;
+        final String id = String.format("%s-%s", leftNode.getId(), rightNode.getId());
+        final String name = String.format("%s-%s", leftNode.getName(), rightNode.getName());
+        return new Relation(id, name);
     }
 
     public Relation createEdge(Node leftNode, Node rightNode, String id, String name) {

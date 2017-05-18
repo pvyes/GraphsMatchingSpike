@@ -55,15 +55,19 @@ public class SystemUnderConsiderationGraphTest {
     @Test
     public void testSystemUnderConsideration() {
         final Relation relation = suc.edgeSet().stream().findFirst().orElse(null);
-        assertThat(relation.getLeftNode().getName(), is("super"));
-        assertThat(relation.getRightNode().getName(), is("sub"));
+        assertThat(suc.getEdgeSource(relation).getName(), is("super"));
+        assertThat(suc.getEdgeTarget(relation).getName(), is("sub"));
+        assertThat(relation.getId(), is("super-sub"));
+        assertThat(relation.getName(), is("super-sub"));
     }
 
     @Test
     public void testDesignPattern() {
         final Relation relation = dp.edgeSet().stream().findFirst().orElse(null);
-        assertThat(relation.getLeftNode().getName(), is("AbstractClass"));
-        assertThat(relation.getRightNode().getName(), is("ConcreteClass"));
+        assertThat(dp.getEdgeSource(relation).getName(), is("AbstractClass"));
+        assertThat(dp.getEdgeTarget(relation).getName(), is("ConcreteClass"));
+        assertThat(relation.getId(), is("AbstractClass-ConcreteClass"));
+        assertThat(relation.getName(), is("AbstractClass-ConcreteClass"));
     }
 
     @Test

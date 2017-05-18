@@ -13,8 +13,6 @@ public class Relation {
     private boolean selfRef, locked, virtual;
     private Cardinality cardinalityLeft; //cardinality on leftNode
     private Cardinality cardinalityRight; //cardinality on rightNode
-    private Node leftNode;
-    private Node rightNode;
 
     public Relation(Node leftNode, Node rightNode, RelationType type) {
         this.relationType = type;
@@ -23,8 +21,6 @@ public class Relation {
         this.virtual = false;
         this.cardinalityLeft = null;
         this.cardinalityRight = null;
-        this.leftNode = leftNode;
-        this.rightNode = rightNode;
     }
 
     public Relation(Node leftNode, Node rightNode, RelationType type, String name) {
@@ -117,26 +113,6 @@ public class Relation {
         cardinalityLeft = null;
     }
 
-    public void removeCardinalityRight() {
-        cardinalityRight = null;
-    }
-
-    public Node getLeftNode() {
-        return leftNode;
-    }
-
-    public void setLeftNode(Node leftNode) {
-        this.leftNode = leftNode;
-    }
-
-    public Node getRightNode() {
-        return rightNode;
-    }
-
-    public void setRightNode(Node rightNode) {
-        this.rightNode = rightNode;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -149,14 +125,12 @@ public class Relation {
                 Objects.equals(name, relation.name) &&
                 relationType == relation.relationType &&
                 Objects.equals(cardinalityLeft, relation.cardinalityLeft) &&
-                Objects.equals(cardinalityRight, relation.cardinalityRight) &&
-                Objects.equals(leftNode, relation.leftNode) &&
-                Objects.equals(rightNode, relation.rightNode);
+                Objects.equals(cardinalityRight, relation.cardinalityRight);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, relationType, selfRef, locked, virtual, cardinalityLeft, cardinalityRight, leftNode, rightNode);
+        return Objects.hash(id, name, relationType, selfRef, locked, virtual, cardinalityLeft, cardinalityRight);
     }
 }
 
