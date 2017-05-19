@@ -66,13 +66,10 @@ public class AdapterGraphTest {
                 .setCardinalityLeft(Cardinality.valueOf("1"))
                 .setCardinalityRight(Cardinality.valueOf("1"));
 
-        adapterPattern.setRelationComparator(
-                RelationComparatorFactory.createCompoundRelationComparator(
-                        RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.TYPE, Operation.EQUALS),
-                        RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_LEFT, Operation.EQUALS),
-                        RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_RIGHT, Operation.EQUALS)
-                )
-        );
+        adapterPattern.setRelationComparator(RelationComparatorFactory.createCompoundRelationComparator());
+        adapterPattern.getRelationComparator().addComparator(RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.TYPE, Operation.EQUALS));
+        adapterPattern.getRelationComparator().addComparator(RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_LEFT, Operation.EQUALS));
+        adapterPattern.getRelationComparator().addComparator(RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_RIGHT, Operation.EQUALS));
 
         adapterPattern.setNodeComparator(
                 NodeComparatorFactory.createCompoundNodeComparator(

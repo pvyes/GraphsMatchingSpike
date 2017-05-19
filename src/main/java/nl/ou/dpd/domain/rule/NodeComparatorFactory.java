@@ -9,11 +9,11 @@ import java.util.Comparator;
  */
 public class NodeComparatorFactory {
 
-    public static Comparator<Node> createCompoundNodeComparator() {
+    public static CompoundComparator<Node> createCompoundNodeComparator() {
         return new CompoundNodeComparator();
     }
 
-    public static Comparator<Node> createCompoundNodeComparator(Comparator<Node>... subComparators) {
+    public static CompoundComparator<Node> createCompoundNodeComparator(Comparator<Node>... subComparators) {
         final CompoundNodeComparator compoundNodeComparator = new CompoundNodeComparator();
         for (Comparator<Node> subComparator : subComparators) {
             compoundNodeComparator.addComparator(subComparator);

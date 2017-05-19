@@ -5,6 +5,7 @@ import nl.ou.dpd.domain.edge.Relation;
 import nl.ou.dpd.domain.node.Clazz;
 import nl.ou.dpd.domain.node.Node;
 import nl.ou.dpd.domain.node.Visibility;
+import nl.ou.dpd.domain.rule.CompoundComparator;
 import org.jgrapht.alg.isomorphism.VF2SubgraphIsomorphismInspector;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,9 +26,9 @@ import static org.mockito.Mockito.when;
 public class SystemUnderConsiderationGraphTest {
 
     @Mock
-    Comparator<Node> vertexComparator;
+    CompoundComparator<Node> vertexComparator;
     @Mock
-    Comparator<Relation> edgeComparator;
+    CompoundComparator<Relation> edgeComparator;
 
     private SystemUnderConsiderationGraph suc;
     private Node superClassSys;

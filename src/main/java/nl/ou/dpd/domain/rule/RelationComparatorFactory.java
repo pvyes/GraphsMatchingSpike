@@ -9,11 +9,11 @@ import java.util.Comparator;
  */
 public class RelationComparatorFactory {
 
-    public static Comparator<Relation> createCompoundRelationComparator() {
+    public static CompoundComparator<Relation> createCompoundRelationComparator() {
         return new CompoundRelationComparator();
     }
 
-    public static Comparator<Relation> createCompoundRelationComparator(Comparator<Relation>... subComparators) {
+    public static CompoundComparator<Relation> createCompoundRelationComparator(Comparator<Relation>... subComparators) {
         final CompoundRelationComparator compoundRelationComparator = new CompoundRelationComparator();
         for (Comparator<Relation> subComparator: subComparators) {
             compoundRelationComparator.addComparator(subComparator);
