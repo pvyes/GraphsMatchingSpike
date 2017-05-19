@@ -13,13 +13,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.contains;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdapterGraphTest {
@@ -36,8 +36,8 @@ public class AdapterGraphTest {
     private Node aanpasser;
     private Node aangepaste;
 
-    private Comparator<Node> nodecomparator = new NodeComparator();
-    private Comparator<Relation> relationcomparator = new RelationComparator();
+    private Comparator<Node> nodecomparator;
+    private Comparator<Relation> relationcomparator;
 
     private Solution solution;
 
@@ -68,6 +68,8 @@ public class AdapterGraphTest {
                 .setCardinalityLeft(Cardinality.valueOf("1"))
                 .setCardinalityRight(Cardinality.valueOf("1"));
 
+        relationcomparator = new RelationComparator(adapterPattern);
+        nodecomparator = new NodeComparator(adapterPattern);
         solution = new Solution(adapterPattern.getName());
     }
 
@@ -135,13 +137,17 @@ public class AdapterGraphTest {
      * Compares two {@link Relation}s.
      */
     private class RelationComparator implements Comparator<Relation> {
+
+        private List<Comparator<Relation>> comparators = new ArrayList<>();
+
+        public RelationComparator(DesignPatternGraph pattern) {
+            comparators.add(TestHelper.getCardinalityComparator(pattern));
+            comparators.add(TestHelper.getRelationTypeComparator(pattern));
+        }
+
         @Override
         public int compare(Relation o1, Relation o2) {
-            final boolean sameRelationType = o1.getRelationType().equals(o2.getRelationType());
-            final boolean sameCardinalityLeft = o1.getCardinalityLeft().equals(o2.getCardinalityLeft());
-            final boolean sameCardinalityRight = o1.getCardinalityRight().equals(o2.getCardinalityRight());
-            final boolean same = sameRelationType && sameCardinalityLeft && sameCardinalityRight;
-            if (same) {
+            if (comparators.stream().filter(comparator -> comparator.compare(o1, o2) != 0).count() == 0) {
                 solution.addMatchingNodes(adapterPattern.getEdgeSource(o2), systemUnderConsideration.getEdgeSource(o1));
                 solution.addMatchingNodes(adapterPattern.getEdgeTarget(o2), systemUnderConsideration.getEdgeTarget(o1));
                 return 0;
@@ -154,16 +160,19 @@ public class AdapterGraphTest {
      * Compares two {@link Node}s.
      */
     private class NodeComparator implements Comparator<Node> {
+
+        private List<Comparator<Node>> comparators = new ArrayList<>();
+
+        public NodeComparator(DesignPatternGraph pattern) {
+            comparators.add(TestHelper.getVisibilityComparator(pattern));
+            comparators.add(TestHelper.getAbstractModifierComparator(pattern));
+        }
         @Override
         public int compare(Node o1, Node o2) {
-            final boolean sameVisibility = o1.getVisibility() == o2.getVisibility();
-            final boolean sameAbstractModifier = o1.isAbstract() == o2.isAbstract();
-            final boolean same = sameVisibility && sameAbstractModifier;
-            if (same) {
+            if (comparators.stream().filter(comparator -> comparator.compare(o1, o2) != 0).count() == 0) {
                 return 0;
-            } else {
-                return 1;
             }
+            return 1;
         }
     }
 }
