@@ -71,6 +71,8 @@ public class SystemUnderConsiderationGraphTest {
         when(vertexComparator.compare(superClassSys, superClassDp)).thenReturn(0);
         when(vertexComparator.compare(subClassSys, subClassDp)).thenReturn(0);
         when(edgeComparator.compare(any(Relation.class), any(Relation.class))).thenReturn(0);
+        dp.setRelationComparator(edgeComparator);
+        dp.setNodeComparator(vertexComparator);
     }
 
     @Test
@@ -105,22 +107,19 @@ public class SystemUnderConsiderationGraphTest {
 
     @Test
     public void testMatch() {
-        VF2SubgraphIsomorphismInspector<Node, Relation> inspector = new VF2SubgraphIsomorphismInspector<>(suc, dp, vertexComparator, edgeComparator);
-        assertTrue(inspector.isomorphismExists());
+        assertTrue(dp.match(suc));
     }
 
     @Test
     public void testNoEdgeMatch() {
         when(edgeComparator.compare(any(Relation.class), any(Relation.class))).thenReturn(1);
-        VF2SubgraphIsomorphismInspector<Node, Relation> inspector = new VF2SubgraphIsomorphismInspector<>(suc, dp, vertexComparator, edgeComparator);
-        assertFalse(inspector.isomorphismExists());
+        assertFalse(dp.match(suc));
     }
 
     @Test
     public void testNoNodeMatch() {
         when(vertexComparator.compare(any(Node.class), any(Node.class))).thenReturn(1);
-        VF2SubgraphIsomorphismInspector<Node, Relation> inspector = new VF2SubgraphIsomorphismInspector<>(suc, dp, vertexComparator, edgeComparator);
-        assertFalse(inspector.isomorphismExists());
+        assertFalse(dp.match(suc));
     }
 
     private Node createPublicClass(String name) {
