@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -70,8 +69,8 @@ public class AdapterGraphTest {
                 .setCardinalityLeft(Cardinality.valueOf("1"))
                 .setCardinalityRight(Cardinality.valueOf("1"));
 
-        relationcomparator = RelationComparatorFactory.createMasterComparator();
-        nodecomparator = NodeComparatorFactory.createMasterComparator();
+        relationcomparator = RelationComparatorFactory.createRelationComparator();
+        nodecomparator = NodeComparatorFactory.createNodeComparator();
         solution = new Solution(adapterPattern.getName());
     }
 

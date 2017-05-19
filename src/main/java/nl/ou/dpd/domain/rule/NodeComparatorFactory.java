@@ -13,15 +13,15 @@ import java.util.List;
  */
 public class NodeComparatorFactory {
 
-    public static Comparator<Node> createMasterComparator() {
+    public static Comparator<Node> createNodeComparator() {
         return new CompoundNodeComparator();
     }
 
     private static Comparator<Node> createVisibilityComparator() {
         return new Comparator<Node>() {
             @Override
-            public int compare(Node o1, Node o2) {
-                return o1.getVisibility() == o2.getVisibility() ? 0 : 1;
+            public int compare(Node systemNode, Node patternNode) {
+                return systemNode.getVisibility() == patternNode.getVisibility() ? 0 : 1;
             }
         };
     }
@@ -29,8 +29,8 @@ public class NodeComparatorFactory {
     private static Comparator<Node> createAbstractModifierComparator() {
         return new Comparator<Node>() {
             @Override
-            public int compare(Node o1, Node o2) {
-                return o1.isAbstract() == o2.isAbstract() ? 0 : 1;
+            public int compare(Node systemNode, Node patternNode) {
+                return systemNode.isAbstract() == patternNode.isAbstract() ? 0 : 1;
             }
         };
     }
@@ -38,15 +38,15 @@ public class NodeComparatorFactory {
     private static class CompoundNodeComparator implements Comparator<Node> {
         private List<Comparator<Node>> comparators = new ArrayList<>();
 
-        public CompoundNodeComparator() {
+        private CompoundNodeComparator() {
             comparators.add(createVisibilityComparator());
             comparators.add(createAbstractModifierComparator());
         }
 
         @Override
-        public int compare(Node o1, Node o2) {
+        public int compare(Node systemNode, Node patternNode) {
             return (int) comparators.stream()
-                    .filter(comparator -> comparator.compare(o1, o2) != 0)
+                    .filter(comparator -> comparator.compare(systemNode, patternNode) != 0)
                     .count();
         }
     }

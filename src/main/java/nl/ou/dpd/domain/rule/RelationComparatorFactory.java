@@ -11,16 +11,16 @@ import java.util.List;
  */
 public class RelationComparatorFactory {
 
-    public static Comparator<Relation> createMasterComparator() {
+    public static Comparator<Relation> createRelationComparator() {
         return new CompoundRelationComparator();
     }
 
     private static Comparator<Relation> createCardinalityComparator() {
         return new Comparator<Relation>() {
             @Override
-            public int compare(Relation o1, Relation o2) {
-                final boolean sameCardinalityLeft = o1.getCardinalityLeft().equals(o2.getCardinalityLeft());
-                final boolean sameCardinalityRight = o1.getCardinalityRight().equals(o2.getCardinalityRight());
+            public int compare(Relation systemRelation, Relation patternRelation) {
+                final boolean sameCardinalityLeft = systemRelation.getCardinalityLeft().equals(patternRelation.getCardinalityLeft());
+                final boolean sameCardinalityRight = systemRelation.getCardinalityRight().equals(patternRelation.getCardinalityRight());
                 final boolean same = sameCardinalityLeft && sameCardinalityRight;
                 return same ? 0 : 1;
             }
@@ -30,9 +30,8 @@ public class RelationComparatorFactory {
     private static Comparator<Relation> createRelationTypeComparator() {
         return new Comparator<Relation>() {
             @Override
-            public int compare(Relation o1, Relation o2) {
-                final boolean sameRelationType = o1.getRelationType() == o2.getRelationType();
-                return sameRelationType ? 0 : 1;
+            public int compare(Relation systemRelation, Relation patternRelation) {
+                return systemRelation.getRelationType() == patternRelation.getRelationType() ? 0 : 1;
             }
         };
     }
@@ -40,14 +39,16 @@ public class RelationComparatorFactory {
     private static class CompoundRelationComparator implements Comparator<Relation> {
         private List<Comparator<Relation>> comparators = new ArrayList<>();
 
-        public CompoundRelationComparator() {
+        private CompoundRelationComparator() {
             comparators.add(createCardinalityComparator());
             comparators.add(createRelationTypeComparator());
         }
 
         @Override
-        public int compare(Relation o1, Relation o2) {
-            return (int) comparators.stream().filter(comparator -> comparator.compare(o1, o2) != 0).count();
+        public int compare(Relation systemRelation, Relation patternRelation) {
+            return (int) comparators.stream()
+                    .filter(comparator -> comparator.compare(systemRelation, patternRelation) != 0)
+                    .count();
         }
     }
 
