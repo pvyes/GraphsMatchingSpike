@@ -3,16 +3,15 @@ package nl.ou.dpd.domain;
 import nl.ou.dpd.domain.node.Node;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Solution {
+public class Feedback {
 
     private final String designPatternName;
     private final List<Node[]> matchingNodes;
 
-    public Solution(String designPatternName) {
+    public Feedback(String designPatternName) {
         this.matchingNodes = new ArrayList<>();
         this.designPatternName = designPatternName;
     }
@@ -31,7 +30,7 @@ public class Solution {
                 .collect(Collectors.toList());
     }
 
-    public Solution addMatchingNodes(Node patternNode, Node systemNode) {
+    public Feedback addMatchingNodes(Node patternNode, Node systemNode) {
         if (!previouslyAddedMatchingNodes(patternNode, systemNode)) {
             matchingNodes.add(new Node[]{patternNode, systemNode});
         }

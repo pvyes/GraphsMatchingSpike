@@ -1,6 +1,6 @@
 package nl.ou.abi.GraphsMatchingSpike;
 
-import nl.ou.dpd.domain.Solution;
+import nl.ou.dpd.domain.Feedback;
 import nl.ou.dpd.domain.edge.Cardinality;
 import nl.ou.dpd.domain.edge.Relation;
 import nl.ou.dpd.domain.edge.RelationType;
@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Comparator;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -38,10 +37,7 @@ public class AdapterGraphTest {
     private Node aanpasser;
     private Node aangepaste;
 
-    private Comparator<Node> nodecomparator;
-    private Comparator<Relation> relationcomparator;
-
-    private Solution solution;
+    private Feedback feedback;
 
     @Before
     public void initPattern() {
@@ -70,17 +66,22 @@ public class AdapterGraphTest {
                 .setCardinalityLeft(Cardinality.valueOf("1"))
                 .setCardinalityRight(Cardinality.valueOf("1"));
 
-        relationcomparator = RelationComparatorFactory.createCompoundRelationComparator(
-                RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.TYPE, Operation.EQUALS),
-                RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_LEFT, Operation.EQUALS),
-                RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_RIGHT, Operation.EQUALS)
+        adapterPattern.setRelationComparator(
+                RelationComparatorFactory.createCompoundRelationComparator(
+                        RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.TYPE, Operation.EQUALS),
+                        RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_LEFT, Operation.EQUALS),
+                        RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_RIGHT, Operation.EQUALS)
+                )
         );
 
-        nodecomparator = NodeComparatorFactory.createCompoundNodeComparator(
-                NodeComparatorFactory.createNodeComparator(Scope.OBJECT, Topic.MODIFIER_ABSTRACT, Operation.EQUALS)
+        adapterPattern.setNodeComparator(
+                NodeComparatorFactory.createCompoundNodeComparator(
+                        NodeComparatorFactory.createNodeComparator(Scope.OBJECT, Topic.MODIFIER_ABSTRACT, Operation.EQUALS)
+                )
         );
 
-        solution = new Solution(adapterPattern.getName());
+
+        feedback = new Feedback(adapterPattern.getName());
     }
 
     @Before
@@ -113,14 +114,9 @@ public class AdapterGraphTest {
 
     @Test
     public void testMatch() {
-        VF2SubgraphIsomorphismInspector<Node, Relation> inspector = new VF2SubgraphIsomorphismInspector<>(
-                systemUnderConsideration,
-                adapterPattern,
-                nodecomparator,
-                relationcomparator);
-        assertTrue(inspector.isomorphismExists());
+        assertTrue(adapterPattern.match(systemUnderConsideration));
 
-//        final List<String[]> matchingNodeNames = solution.getMatchingNodeNames();
+//        final List<String[]> matchingNodeNames = feedback.getMatchingNodeNames();
 //        assertContains(matchingNodeNames, new String[]{"Client", "Klant"});
 //        assertContains(matchingNodeNames, new String[]{"Target", "Doel"});
 //        assertContains(matchingNodeNames, new String[]{"Adapter", "Aanpasser"});
