@@ -2,18 +2,23 @@ package nl.ou.dpd.domain.rule;
 
 import nl.ou.dpd.domain.edge.Relation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by martindeboer on 19-05-17.
  */
 public class RelationComparatorFactory {
 
+    public static Comparator<Relation> createCompoundRelationComparator() {
+        return new CompoundRelationComparator();
+    }
+
     public static Comparator<Relation> createCompoundRelationComparator(Comparator<Relation>... subComparators) {
-        return new CompoundRelationComparator(subComparators);
+        final CompoundRelationComparator compoundRelationComparator = new CompoundRelationComparator();
+        for (Comparator<Relation> subComparator: subComparators) {
+            compoundRelationComparator.addComparator(subComparator);
+        }
+        return compoundRelationComparator;
     }
 
     public static Comparator<Relation> createRelationComparator(Scope scope, Topic topic, Operation operation) {
@@ -84,19 +89,8 @@ public class RelationComparatorFactory {
         };
     }
 
-    private static class CompoundRelationComparator implements Comparator<Relation> {
-        private List<Comparator<Relation>> comparators = new ArrayList<>();
+    private static class CompoundRelationComparator extends CompoundComparator<Relation> {
 
-        private CompoundRelationComparator(Comparator<Relation>... subComparators) {
-            comparators.addAll(Arrays.asList(subComparators));
-        }
-
-        @Override
-        public int compare(Relation systemRelation, Relation patternRelation) {
-            return (int) comparators.stream()
-                    .filter(comparator -> comparator.compare(systemRelation, patternRelation) != 0)
-                    .count();
-        }
     }
 
 

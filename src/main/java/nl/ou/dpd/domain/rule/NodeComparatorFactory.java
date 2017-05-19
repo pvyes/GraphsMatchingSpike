@@ -2,18 +2,23 @@ package nl.ou.dpd.domain.rule;
 
 import nl.ou.dpd.domain.node.Node;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by martindeboer on 19-05-17.
  */
 public class NodeComparatorFactory {
 
+    public static Comparator<Node> createCompoundNodeComparator() {
+        return new CompoundNodeComparator();
+    }
+
     public static Comparator<Node> createCompoundNodeComparator(Comparator<Node>... subComparators) {
-        return new CompoundNodeComparator(subComparators);
+        final CompoundNodeComparator compoundNodeComparator = new CompoundNodeComparator();
+        for (Comparator<Node> subComparator : subComparators) {
+            compoundNodeComparator.addComparator(subComparator);
+        }
+        return compoundNodeComparator;
     }
 
     public static Comparator<Node> createNodeComparator(Scope scope, Topic topic, Operation operation) {
@@ -169,18 +174,7 @@ public class NodeComparatorFactory {
         };
     }
 
-    private static class CompoundNodeComparator implements Comparator<Node> {
-        private List<Comparator<Node>> comparators = new ArrayList<>();
+    private static class CompoundNodeComparator extends CompoundComparator<Node> {
 
-        private CompoundNodeComparator(Comparator<Node>... subComparators) {
-            comparators.addAll(Arrays.asList(subComparators));
-        }
-
-        @Override
-        public int compare(Node systemNode, Node patternNode) {
-            return (int) comparators.stream()
-                    .filter(comparator -> comparator.compare(systemNode, patternNode) != 0)
-                    .count();
-        }
     }
 }
