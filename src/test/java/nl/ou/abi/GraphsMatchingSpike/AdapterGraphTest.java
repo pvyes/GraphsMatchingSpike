@@ -146,7 +146,7 @@ public class AdapterGraphTest {
                 solution.addMatchingNodes(adapterPattern.getEdgeTarget(o2), systemUnderConsideration.getEdgeTarget(o1));
                 return 0;
             }
-            return -1;
+            return 1;
         }
     }
 
@@ -156,7 +156,14 @@ public class AdapterGraphTest {
     private class NodeComparator implements Comparator<Node> {
         @Override
         public int compare(Node o1, Node o2) {
-            return 0;
+            final boolean sameVisibility = o1.getVisibility() == o2.getVisibility();
+            final boolean sameAbstractModifier = o1.isAbstract() == o2.isAbstract();
+            final boolean same = sameVisibility && sameAbstractModifier;
+            if (same) {
+                return 0;
+            } else {
+                return 1;
+            }
         }
     }
 }
