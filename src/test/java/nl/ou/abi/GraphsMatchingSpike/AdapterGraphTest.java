@@ -1,5 +1,6 @@
 package nl.ou.abi.GraphsMatchingSpike;
 
+import nl.ou.dpd.domain.Solution;
 import nl.ou.dpd.domain.edge.Cardinality;
 import nl.ou.dpd.domain.edge.Relation;
 import nl.ou.dpd.domain.edge.RelationType;
@@ -13,8 +14,12 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Comparator;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.contains;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdapterGraphTest {
@@ -33,6 +38,8 @@ public class AdapterGraphTest {
 
     private Comparator<Node> nodecomparator = new NodeComparator();
     private Comparator<Relation> relationcomparator = new RelationComparator();
+
+    private Solution solution;
 
     @Before
     public void initPattern() {
@@ -60,6 +67,8 @@ public class AdapterGraphTest {
                 .setRelationType(RelationType.ASSOCIATION_DIRECTED)
                 .setCardinalityLeft(Cardinality.valueOf("1"))
                 .setCardinalityRight(Cardinality.valueOf("1"));
+
+        solution = new Solution(adapterPattern.getName());
     }
 
     @Before
@@ -98,6 +107,20 @@ public class AdapterGraphTest {
                 nodecomparator,
                 relationcomparator);
         assertTrue(inspector.isomorphismExists());
+
+        final List<String[]> matchingNodeNames = solution.getMatchingNodeNames();
+        assertContains(matchingNodeNames, new String[]{"Client", "Klant"});
+        assertContains(matchingNodeNames, new String[]{"Target", "Doel"});
+        assertContains(matchingNodeNames, new String[]{"Adapter", "Aanpasser"});
+        assertContains(matchingNodeNames, new String[]{"Adaptee", "Aangepaste"});
+        assertThat(matchingNodeNames.size(), is(4));
+    }
+
+    private void assertContains(List<String[]> actualNames, String[] expectedNames) {
+        String[] found = actualNames.stream()
+                .filter(names -> names[0].equals(expectedNames[0]) && names[1].equals(expectedNames[1]))
+                .findFirst().orElse(null);
+        assertTrue(found != null);
     }
 
     private Node createPublicClass(String name) {
@@ -119,12 +142,8 @@ public class AdapterGraphTest {
             final boolean sameCardinalityRight = o1.getCardinalityRight().equals(o2.getCardinalityRight());
             final boolean same = sameRelationType && sameCardinalityLeft && sameCardinalityRight;
             if (same) {
-                String output = String.format("%s -> %s matches %s -> %s.",
-                        systemUnderConsideration.getEdgeSource(o1).getName(),
-                        systemUnderConsideration.getEdgeTarget(o1).getName(),
-                        adapterPattern.getEdgeSource(o2).getName(),
-                        adapterPattern.getEdgeTarget(o2).getName());
-                System.out.println(output);
+                solution.addMatchingNodes(adapterPattern.getEdgeSource(o2), systemUnderConsideration.getEdgeSource(o1));
+                solution.addMatchingNodes(adapterPattern.getEdgeTarget(o2), systemUnderConsideration.getEdgeTarget(o1));
                 return 0;
             }
             return -1;
