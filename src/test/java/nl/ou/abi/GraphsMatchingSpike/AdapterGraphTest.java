@@ -8,7 +8,10 @@ import nl.ou.dpd.domain.node.Clazz;
 import nl.ou.dpd.domain.node.Node;
 import nl.ou.dpd.domain.node.Visibility;
 import nl.ou.dpd.domain.rule.NodeComparatorFactory;
+import nl.ou.dpd.domain.rule.Operation;
 import nl.ou.dpd.domain.rule.RelationComparatorFactory;
+import nl.ou.dpd.domain.rule.Scope;
+import nl.ou.dpd.domain.rule.Topic;
 import org.jgrapht.alg.isomorphism.VF2SubgraphIsomorphismInspector;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdapterGraphTest {
@@ -69,8 +70,16 @@ public class AdapterGraphTest {
                 .setCardinalityLeft(Cardinality.valueOf("1"))
                 .setCardinalityRight(Cardinality.valueOf("1"));
 
-        relationcomparator = RelationComparatorFactory.createRelationComparator();
-        nodecomparator = NodeComparatorFactory.createNodeComparator();
+        relationcomparator = RelationComparatorFactory.createCompoundRelationComparator(
+                RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.TYPE, Operation.EQUALS),
+                RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_LEFT, Operation.EQUALS),
+                RelationComparatorFactory.createRelationComparator(Scope.RELATION, Topic.CARDINALITY_RIGHT, Operation.EQUALS)
+        );
+
+        nodecomparator = NodeComparatorFactory.createCompoundNodeComparator(
+                NodeComparatorFactory.createNodeComparator(Scope.OBJECT, Topic.MODIFIER_ABSTRACT, Operation.EQUALS)
+        );
+
         solution = new Solution(adapterPattern.getName());
     }
 
