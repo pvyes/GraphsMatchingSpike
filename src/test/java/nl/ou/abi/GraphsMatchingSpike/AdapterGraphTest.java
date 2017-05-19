@@ -7,6 +7,8 @@ import nl.ou.dpd.domain.edge.RelationType;
 import nl.ou.dpd.domain.node.Clazz;
 import nl.ou.dpd.domain.node.Node;
 import nl.ou.dpd.domain.node.Visibility;
+import nl.ou.dpd.domain.rule.NodeComparatorFactory;
+import nl.ou.dpd.domain.rule.RelationComparatorFactory;
 import org.jgrapht.alg.isomorphism.VF2SubgraphIsomorphismInspector;
 import org.junit.Before;
 import org.junit.Test;
@@ -141,13 +143,14 @@ public class AdapterGraphTest {
         private List<Comparator<Relation>> comparators = new ArrayList<>();
 
         public RelationComparator(DesignPatternGraph pattern) {
-            comparators.add(TestHelper.getCardinalityComparator(pattern));
-            comparators.add(TestHelper.getRelationTypeComparator(pattern));
+            comparators.add(RelationComparatorFactory.createCardinalityComparator());
+            comparators.add(RelationComparatorFactory.createRelationTypeComparator());
         }
 
         @Override
         public int compare(Relation o1, Relation o2) {
             if (comparators.stream().filter(comparator -> comparator.compare(o1, o2) != 0).count() == 0) {
+                // TODO: Nodes might not match; therefore, adding info to the solution here, might not be the best idea.
                 solution.addMatchingNodes(adapterPattern.getEdgeSource(o2), systemUnderConsideration.getEdgeSource(o1));
                 solution.addMatchingNodes(adapterPattern.getEdgeTarget(o2), systemUnderConsideration.getEdgeTarget(o1));
                 return 0;
@@ -164,15 +167,15 @@ public class AdapterGraphTest {
         private List<Comparator<Node>> comparators = new ArrayList<>();
 
         public NodeComparator(DesignPatternGraph pattern) {
-            comparators.add(TestHelper.getVisibilityComparator(pattern));
-            comparators.add(TestHelper.getAbstractModifierComparator(pattern));
+            comparators.add(NodeComparatorFactory.createVisibilityComparator());
+            comparators.add(NodeComparatorFactory.createAbstractModifierComparator());
         }
+
         @Override
         public int compare(Node o1, Node o2) {
-            if (comparators.stream().filter(comparator -> comparator.compare(o1, o2) != 0).count() == 0) {
-                return 0;
-            }
-            return 1;
+            return (int) comparators.stream()
+                    .filter(comparator -> comparator.compare(o1, o2) != 0)
+                    .count();
         }
     }
 }
